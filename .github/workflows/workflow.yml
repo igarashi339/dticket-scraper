@@ -2,7 +2,7 @@ name: dticket-scraper
 on:
   workflow_dispatch:
 env:
-  SELENIUM_URL: ${secrets.SELENIUM_URL}
+  SELENIUM_URL: ${{secrets.SELENIUM_URL}}
   DATABASE_URL: ${{secrets.DATABASE_URL}}
   SCRAPING_TARGET_URL: ${{secrets.SCRAPING_TARGET_URL}}
 jobs:
