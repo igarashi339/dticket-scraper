@@ -11,5 +11,5 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - run: docker-compose up -d
-      - run: docker-compose exec app python main.py
+      - run: docker-compose exec -it app python main.py
       - run: docker-compose down
