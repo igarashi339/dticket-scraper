@@ -26,7 +26,7 @@ def exec_single_day(driver, line_handler, page, row, col):
     # 1デーパスポート
     now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
     now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
-    line_handler.broadcast(f"{month_str}{day_str}のチケットがとれそう！\n{URL}")
+    line_handler.broadcast(f"{month_str}{day_str}の1デーパスポートがとれそう！\n{URL}")
     # tdl
     # "//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/button"
     # tds
