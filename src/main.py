@@ -30,7 +30,9 @@ def exec_single_month(driver, line_handler):
             # 1デーパスポート
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
-            line_handler.broadcast(f"{month_str}月{target_date}日の1デーパスポートがとれそう！\n{URL}")
+            # 暫定処理
+            if month_str == "12" and target_date_str == "18":
+                line_handler.broadcast(f"{month_str}月{target_date}日の1デーパスポートがとれそう！\n{URL}")
             time.sleep(1)
         except Exception as e:
             print(e)
