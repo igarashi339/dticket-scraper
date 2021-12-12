@@ -3,6 +3,7 @@ import time
 from selenium import webdriver
 from line_handler import LineHandler
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.firefox.options import Options
 
 
 URL = os.environ["SCRAPING_TARGET_URL"]
@@ -35,8 +36,11 @@ def exec_single_day(driver, line_handler, page, row, col):
 
 
 def main():
+    options = Options()
+    options.add_argument('--headless')
     driver = webdriver.Remote(
         command_executor=os.environ["SELENIUM_URL"],
+        options=options,
         desired_capabilities=DesiredCapabilities.FIREFOX.copy())
     driver.implicitly_wait(5)
     driver.get(URL)
