@@ -12,5 +12,7 @@ services:
     volumes:
       - ./src:/src
     environment:
-      SELENIUM_URL: http://selenium:4444/wd/hub
+      SELENIUM_URL: '${SELENIUM_URL}'
+      DATABASE_URL: '${DATABASE_URL}'
+      SCRAPING_TARGET_URL: '${SCRAPING_TARGET_URL}'
     tty: true
