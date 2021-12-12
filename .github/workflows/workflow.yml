@@ -5,6 +5,8 @@ env:
   SELENIUM_URL: ${{secrets.SELENIUM_URL}}
   DATABASE_URL: ${{secrets.DATABASE_URL}}
   SCRAPING_TARGET_URL: ${{secrets.SCRAPING_TARGET_URL}}
+  LINE_ACCESS_TOKEN: ${{secrets.LINE_ACCESS_TOKEN}}
+  LINE_ADMIN_ID: ${{secrets.LINE_ADMIN_ID}}
 jobs:
   build:
     name: scraping
