@@ -40,7 +40,7 @@ def main():
     options.add_argument('--headless')
     driver = webdriver.Remote(
         command_executor=os.environ["SELENIUM_URL"],
-        options=options,
+        # options=options,
         desired_capabilities=DesiredCapabilities.FIREFOX.copy())
     driver.implicitly_wait(5)
     driver.get(URL)
