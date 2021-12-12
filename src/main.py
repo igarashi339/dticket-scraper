@@ -30,9 +30,7 @@ def exec_single_month(driver, line_handler):
             # 1デーパスポート
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
-            # 暫定処理
-            if month_str == "12" and target_date_str == "18":
-                line_handler.broadcast(f"{month_str}月{target_date}日の1デーパスポートがとれそう！\n{URL}")
+            line_handler.broadcast(f"{month_str}月{target_date}日の1デーパスポートがとれそう！\n{URL}")
             time.sleep(1)
         except Exception as e:
             print(e)
@@ -47,6 +45,26 @@ def exec_single_month(driver, line_handler):
     return True
 
 
+def exec_single_date(driver, line_handler):
+    start_time = time.time()
+    elapsed_time = 0
+    MAX_TIME_SECOND = 50 * 60  # 処理を打ち切る時間[秒]
+    while elapsed_time < MAX_TIME_SECOND:
+        elapsed_time = time.time() - start_time
+        try:
+            # 2021/12/18
+            driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/div/ul/div/div/li[1]/div/table/tbody/tr[3]/td[6]/a/span[1]").click()
+            time.sleep(1)
+            driver.find_element_by_xpath("//*[@id=\"searchEticket\"]").click()
+            time.sleep(15)
+            driver.find_element_by_xpath("//*[@id=\"searchResultList\"]/ul/li[1]/div/input")
+            line_handler.broadcast(f"12/18(土)の1デーパスポートがとれそう！\n{URL}")
+        except Exception as e:
+            print(e)
+        time.sleep(10)
+    return
+
+
 def main():
     driver = webdriver.Remote(
         command_executor=os.environ["SELENIUM_URL"],
@@ -54,10 +72,11 @@ def main():
     driver.implicitly_wait(5)
     driver.get(URL)
     line_handler = LineHandler()
-    should_continue = True
-    while should_continue:
-        should_continue = exec_single_month(driver, line_handler)
-        time.sleep(5)
+    exec_single_date(driver, line_handler)
+    # should_continue = True
+    # while should_continue:
+    #     should_continue = exec_single_month(driver, line_handler)
+    #     time.sleep(5)
     driver.quit()
 
 

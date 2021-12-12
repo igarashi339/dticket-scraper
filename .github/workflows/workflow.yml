@@ -1,6 +1,8 @@
 name: dticket-scraper
 on:
   workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
 env:
   SELENIUM_URL: ${{secrets.SELENIUM_URL}}
   DATABASE_URL: ${{secrets.DATABASE_URL}}
