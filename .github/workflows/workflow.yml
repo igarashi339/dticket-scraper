@@ -1,0 +1,15 @@
+name: dticket-scraper
+on:
+  workflow_dispatch:
+env:
+  DATABASE_URL: ${{secrets.DATABASE_URL}}
+  SCRAPING_TARGET_URL: ${{secrets.SCRAPING_TARGET_URL}}
+jobs:
+  build:
+    name: scraping
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker-compose up -d
+      - run: docker-compose exec app python main.py
+      - run: docker-compose down
