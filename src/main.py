@@ -1,5 +1,6 @@
 import os
 import time
+from tweet_handler import TweetHandler
 from selenium import webdriver
 from line_handler import LineHandler
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
@@ -8,7 +9,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 URL = os.environ["SCRAPING_TARGET_URL"]
 
 
-def exec_single_month(driver, line_handler):
+def exec_single_month(driver, line_handler, tweet_handler):
     # month
     month_str = driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/h3/span[2]").text.strip("月")
     for target_date in range(1, 32):
@@ -30,7 +31,7 @@ def exec_single_month(driver, line_handler):
             # 1デーパスポート
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
-            line_handler.broadcast(f"{month_str}月{target_date}日の1デーパスポートがとれそう！\n{URL}")
+            tweet_handler.post_tweet(f"{month_str}月{target_date}日の1デーパスポートが空いたよ！\n{URL}")
             time.sleep(1)
         except Exception as e:
             print(e)
@@ -72,10 +73,11 @@ def main():
     driver.implicitly_wait(5)
     driver.get(URL)
     line_handler = LineHandler()
+    tweet_handler = TweetHandler()
     # exec_single_date(driver, line_handler)
     should_continue = True
     while should_continue:
-        should_continue = exec_single_month(driver, line_handler)
+        should_continue = exec_single_month(driver, line_handler, tweet_handler)
         time.sleep(5)
     driver.quit()
 

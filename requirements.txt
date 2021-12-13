@@ -4,3 +4,4 @@ selenium==3.141.0
 toml==0.10.2
 urllib3==1.26.5
 line-bot-sdk==1.19.0
+tweepy==4.4.0
