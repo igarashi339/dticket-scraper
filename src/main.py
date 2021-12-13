@@ -1,5 +1,6 @@
 import os
 import time
+from datetime import datetime, timezone
 from tweet_handler import TweetHandler
 from selenium import webdriver
 from line_handler import LineHandler
@@ -31,7 +32,9 @@ def exec_single_month(driver, line_handler, tweet_handler):
             # 1デーパスポート
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
-            tweet_handler.post_tweet(f"{month_str}月{target_date}日の1デーパスポートが空いたよ！\n{URL}")
+            dt_now_utc_aware = datetime.datetime.now(datetime.timezone.utc)
+            tweet_handler.post_tweet(f"{month_str}月{target_date}日の1デーパスポートが空いたよ！\n{URL}\n\n"
+                                     f"※{dt_now_utc_aware.strftime('%Y/%m/%d/ %H:%M:%S')}時点の情報です")
             time.sleep(1)
         except Exception as e:
             print(e)
