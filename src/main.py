@@ -34,7 +34,8 @@ def exec_single_month(driver, line_handler, tweet_handler):
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
             dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
             tweet_handler.post_tweet(f"{month_str}月{target_date}日の1デーパスポートが空いてるよ！\n{URL}\n\n"
-                                     f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報です")
+                                     f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報です\n"
+                                     f"#ディズニーチケット")
             time.sleep(1)
         except Exception as e:
             print(e)
