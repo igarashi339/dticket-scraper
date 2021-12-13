@@ -72,11 +72,11 @@ def main():
     driver.implicitly_wait(5)
     driver.get(URL)
     line_handler = LineHandler()
-    exec_single_date(driver, line_handler)
-    # should_continue = True
-    # while should_continue:
-    #     should_continue = exec_single_month(driver, line_handler)
-    #     time.sleep(5)
+    # exec_single_date(driver, line_handler)
+    should_continue = True
+    while should_continue:
+        should_continue = exec_single_month(driver, line_handler)
+        time.sleep(5)
     driver.quit()
 
 
