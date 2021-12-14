@@ -8,11 +8,12 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 URL = os.environ["SCRAPING_TARGET_URL"]
+WEEKDAY_LIST = ["月","火","水","木","金","土","日"]
 TARGET_MONTH_NUM = 2  # 当月含めて何か月分チェックするか
 
 
 def exec_single_month(driver, line_handler, tweet_handler):
-    # month
+    year_str = driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/h3/span[1]").text.strip("年")
     month_str = driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/h3/span[2]").text.strip("月")
     for target_date in range(1, 32):
         try:
@@ -22,7 +23,9 @@ def exec_single_month(driver, line_handler, tweet_handler):
                 if date_elem.text == target_date_str:
                     target_date_elem = date_elem
                     break
-            print(f"{month_str}月{target_date}日チェック...")
+            dt = datetime(year=int(year_str), month=int(month_str), day=int(target_date),tzinfo=timezone(timedelta(hours=+9)))
+            weekday_str = WEEKDAY_LIST[dt.weekday()]
+            print(f"{year_str}/{month_str}/{target_date}({weekday_str})チェック...")
             target_date_elem.click()
             time.sleep(1)
             # view on smart phone
@@ -34,9 +37,10 @@ def exec_single_month(driver, line_handler, tweet_handler):
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
             dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
-            tweet_handler.post_tweet(f"{month_str}月{target_date}日の1デーパスポートが空いてるよ！\n{URL}\n\n"
+            tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパスポートが空いてるよ！\n"
+                                     f"{URL}\n\n"
                                      f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-                                     f"#ディズニー #ディズニーチケット")
+                                     f"#ディズニーチケット")
             time.sleep(1)
         except Exception as e:
             print(e)
