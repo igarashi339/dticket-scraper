@@ -36,9 +36,22 @@ def exec_single_month(driver, line_handler, tweet_handler):
             # 1デーパスポート
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
+            driver.find_element_by_xpath("//*[@id=\"searchResultList\"]/ul/li[1]/div").click()
+            time.sleep(5)
+            # TDS, TDL
+            tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
+            tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
+            tdl_is_available = ("販売していません" not in tdl_str)
+            tds_is_available = ("販売していません" not in tds_str)
+            tdl_available_str = "〇" if tdl_is_available else "×"
+            tds_available_str = "〇" if tds_is_available else "×"
+            # 元の画面に戻る
+            driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[1]/div/a/i").click()
+            # Post Tweet
             dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
             tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパス空いてるよ！\n"
-                                     f"{URL}\n\n"
+                                     f"ランド{tdl_available_str} シー{tds_available_str}\n"
+                                     f"{URL}\n"
                                      f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
                                      f"#ディズニーチケット")
             time.sleep(1)
