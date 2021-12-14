@@ -37,7 +37,7 @@ def exec_single_month(driver, line_handler, tweet_handler):
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
             dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
-            tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパスポートが空いてるよ！\n"
+            tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパス空いてるよ！\n"
                                      f"{URL}\n\n"
                                      f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
                                      f"#ディズニーチケット")
