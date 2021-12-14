@@ -8,6 +8,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
 URL = os.environ["SCRAPING_TARGET_URL"]
+TARGET_MONTH_NUM = 2  # 当月含めて何か月分チェックするか
 
 
 def exec_single_month(driver, line_handler, tweet_handler):
@@ -46,28 +47,6 @@ def exec_single_month(driver, line_handler, tweet_handler):
         next_month_button.click()
     except Exception as e:
         print(e)
-        return False
-    return True
-
-
-def exec_single_date(driver, line_handler):
-    start_time = time.time()
-    elapsed_time = 0
-    MAX_TIME_SECOND = 50 * 60  # 処理を打ち切る時間[秒]
-    while elapsed_time < MAX_TIME_SECOND:
-        elapsed_time = time.time() - start_time
-        try:
-            # 2021/12/18
-            driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/div/ul/div/div/li[1]/div/table/tbody/tr[3]/td[6]/a/span[1]").click()
-            time.sleep(1)
-            driver.find_element_by_xpath("//*[@id=\"searchEticket\"]").click()
-            time.sleep(15)
-            driver.find_element_by_xpath("//*[@id=\"searchResultList\"]/ul/li[1]/div/input")
-            line_handler.broadcast(f"12/18(土)の1デーパスポートがとれそう！\n{URL}")
-        except Exception as e:
-            print(e)
-        time.sleep(10)
-    return
 
 
 def main():
@@ -78,10 +57,8 @@ def main():
     driver.get(URL)
     line_handler = LineHandler()
     tweet_handler = TweetHandler()
-    # exec_single_date(driver, line_handler)
-    should_continue = True
-    while should_continue:
-        should_continue = exec_single_month(driver, line_handler, tweet_handler)
+    for i in range(TARGET_MONTH_NUM):
+        exec_single_month(driver, line_handler, tweet_handler)
         time.sleep(5)
     driver.quit()
 
