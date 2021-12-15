@@ -67,7 +67,7 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
                                          f"ランド{tdl_available_str} シー{tds_available_str}\n"
                                          f"{URL}\n"
                                          f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-                                         f"#ディズニーチケット")
+                                         f"#ディズニー #ディズニーチケット")
             time.sleep(1)
         except Exception as e:
             # DB更新
