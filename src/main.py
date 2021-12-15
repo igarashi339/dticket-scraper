@@ -4,6 +4,7 @@ from datetime import datetime, timezone, timedelta
 from tweet_handler import TweetHandler
 from selenium import webdriver
 from line_handler import LineHandler
+from db_handler import DBHandler
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 
@@ -12,9 +13,10 @@ WEEKDAY_LIST = ["月","火","水","木","金","土","日"]
 TARGET_MONTH_NUM = 2  # 当月含めて何か月分チェックするか
 
 
-def exec_single_month(driver, line_handler, tweet_handler):
+def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
     year_str = driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/h3/span[1]").text.strip("年")
     month_str = driver.find_element_by_xpath("//*[@id=\"searchCalendar\"]/div/h3/span[2]").text.strip("月")
+    dt_global = None
     for target_date in range(1, 32):
         try:
             date_elem_list = driver.find_elements_by_class_name("date")
@@ -24,6 +26,7 @@ def exec_single_month(driver, line_handler, tweet_handler):
                     target_date_elem = date_elem
                     break
             dt = datetime(year=int(year_str), month=int(month_str), day=int(target_date),tzinfo=timezone(timedelta(hours=+9)))
+            dt_global = dt
             weekday_str = WEEKDAY_LIST[dt.weekday()]
             print(f"{year_str}/{month_str}/{target_date}({weekday_str})チェック...")
             target_date_elem.click()
@@ -35,7 +38,7 @@ def exec_single_month(driver, line_handler, tweet_handler):
             time.sleep(15)
             # 1デーパスポート
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
-            now_on_sale_elem = driver.find_element_by_xpath(now_on_sale_str)
+            driver.find_element_by_xpath(now_on_sale_str)
             driver.find_element_by_xpath("//*[@id=\"searchResultList\"]/ul/li[1]/div").click()
             time.sleep(5)
             # TDS, TDL
@@ -47,15 +50,29 @@ def exec_single_month(driver, line_handler, tweet_handler):
             tds_available_str = "〇" if tds_is_available else "×"
             # 元の画面に戻る
             driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[1]/div/a/i").click()
+
+            # ツイートするか決定
+            prev_land_available = db_hanlder.select_from_dticket_status(dt, "land")
+            prev_sea_available = db_hanlder.select_from_dticket_status(dt, "sea")
+            should_tweet = (not prev_land_available and tdl_is_available) or (not prev_sea_available and tds_is_available)
+
+            # DB更新
+            db_hanlder.update_dticket_status_record(dt, "land", tdl_is_available)
+            db_hanlder.update_dticket_status_record(dt, "sea", tds_is_available)
+
             # Post Tweet
-            dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
-            tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパス空いてるよ！\n"
-                                     f"ランド{tdl_available_str} シー{tds_available_str}\n"
-                                     f"{URL}\n"
-                                     f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-                                     f"#ディズニーチケット")
+            if should_tweet:
+                dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
+                tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパス空いてるよ！\n"
+                                         f"ランド{tdl_available_str} シー{tds_available_str}\n"
+                                         f"{URL}\n"
+                                         f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
+                                         f"#ディズニーチケット")
             time.sleep(1)
         except Exception as e:
+            # DB更新
+            db_hanlder.update_dticket_status_record(dt_global, "land", False)
+            db_hanlder.update_dticket_status_record(dt_global, "sea", False)
             print(e)
             time.sleep(1)
     try:
@@ -74,8 +91,9 @@ def main():
     driver.get(URL)
     line_handler = LineHandler()
     tweet_handler = TweetHandler()
+    db_handler = DBHandler()
     for i in range(TARGET_MONTH_NUM):
-        exec_single_month(driver, line_handler, tweet_handler)
+        exec_single_month(driver, line_handler, tweet_handler, db_handler)
         time.sleep(5)
     driver.quit()
 
