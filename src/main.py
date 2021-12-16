@@ -10,7 +10,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 URL = os.environ["SCRAPING_TARGET_URL"]
 WEEKDAY_LIST = ["月","火","水","木","金","土","日"]
-TARGET_MONTH_NUM = 2  # 当月含めて何か月分チェックするか
+TARGET_MONTH_NUM = 3  # 当月含めて何か月分チェックするか
 
 
 def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
@@ -43,7 +43,7 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
             now_on_sale_str = "//*[@id=\"searchResultList\"]/ul/li[1]/div/input"
             driver.find_element_by_xpath(now_on_sale_str)
             driver.find_element_by_xpath("//*[@id=\"searchResultList\"]/ul/li[1]/div").click()
-            time.sleep(5)
+            time.sleep(15)
             # TDS, TDL
             tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
             tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
