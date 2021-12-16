@@ -49,7 +49,7 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
             tdl_available_str = "〇" if tdl_is_available else "×"
             tds_available_str = "〇" if tds_is_available else "×"
             # 元の画面に戻る
-            driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[1]/div/a/i").click()
+            driver.get(URL)
 
             # ツイートするか決定
             should_tweet = False
