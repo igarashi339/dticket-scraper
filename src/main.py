@@ -26,6 +26,9 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
                     target_date_elem = date_elem
                     break
             dt = datetime(year=int(year_str), month=int(month_str), day=int(target_date),tzinfo=timezone(timedelta(hours=+9)))
+            dt_now = datetime.now(timezone(timedelta(hours=9)))
+            if dt_now > dt:
+                continue
             dt_global = dt
             weekday_str = WEEKDAY_LIST[dt.weekday()]
             print(f"{year_str}/{month_str}/{target_date}({weekday_str})チェック...")
@@ -73,8 +76,9 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
             time.sleep(1)
         except Exception as e:
             # DB更新
-            db_hanlder.update_dticket_status_record(dt_global, "land", False)
-            db_hanlder.update_dticket_status_record(dt_global, "sea", False)
+            if dt_global:
+                db_hanlder.update_dticket_status_record(dt_global, "land", False)
+                db_hanlder.update_dticket_status_record(dt_global, "sea", False)
             print(e)
             time.sleep(1)
     try:
