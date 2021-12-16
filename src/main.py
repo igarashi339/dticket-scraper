@@ -52,9 +52,11 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
             driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[1]/div/a/i").click()
 
             # ツイートするか決定
-            prev_land_available = db_hanlder.select_from_dticket_status(dt, "land")
-            prev_sea_available = db_hanlder.select_from_dticket_status(dt, "sea")
-            should_tweet = (not prev_land_available and tdl_is_available) or (not prev_sea_available and tds_is_available)
+            should_tweet = False
+            if weekday_str == "土" or weekday_str == "日":
+                prev_land_available = db_hanlder.select_from_dticket_status(dt, "land")
+                prev_sea_available = db_hanlder.select_from_dticket_status(dt, "sea")
+                should_tweet = (not prev_land_available and tdl_is_available) or (not prev_sea_available and tds_is_available)
 
             # DB更新
             db_hanlder.update_dticket_status_record(dt, "land", tdl_is_available)
