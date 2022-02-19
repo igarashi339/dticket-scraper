@@ -68,9 +68,12 @@ def exec_single_month(driver, line_handler, tweet_handler, db_hanlder):
             # Post Tweet
             if should_tweet:
                 dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
+                # todo: landとsea両方とも協調できるようになったらそうする
+                param_type = "land" if tdl_is_available else "sea"
+                param_date = year_str + "-" + month_str.zfill(2) + "-" + target_date_str.zfill(2)
                 tweet_handler.post_tweet(f"{year_str}/{month_str}/{target_date}({weekday_str})の1デーパス空いてるよ！\n"
                                          f"ランド{tdl_available_str} シー{tds_available_str}\n"
-                                         f"{URL}\n"
+                                         f"https://tdr-plan.com/ticket?type={param_type}&date={param_date}\n"
                                          f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
                                          f"#ディズニー #ディズニーチケット")
             time.sleep(1)
@@ -106,3 +109,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
