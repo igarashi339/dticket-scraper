@@ -57,7 +57,12 @@ def fetch_single_date_ticket_info(driver, target_date_obj):
         tdl_is_available = True
     if "運営時間" in tds_str:
         tds_is_available = True
-    print(target_date_str, tdl_str, tds_str, tdl_is_available, tds_is_available)
+    print("------------------")
+    print(f"target_date: {target_date_str}")
+    print(f"tdl_str: {tdl_str}")
+    print(f"tds_str: {tds_str}")
+    print(f"tdl_is_available: {tdl_is_available}")
+    print(f"tds_is_available: {tds_is_available}")
     return tdl_is_available, tds_is_available
 
 
