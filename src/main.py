@@ -48,9 +48,17 @@ def fetch_single_date_ticket_info(driver, target_date_obj):
     }
     param = urllib.parse.urlencode(param_dict)
     driver.get(TARGET_URL + "?" + param)
-    time.sleep(8)
-    tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
-    tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
+    time.sleep(10)
+
+    # 3回までトライする
+    for i in range(3):
+        tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
+        tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
+        if tdl_str != "" and tds_str != "":
+            break
+        time.sleep(5)
+    if tdl_str == "" or tds_str == "":
+        raise Exception("3回トライしましたが指定の要素を取得できませんでした。")
     tdl_is_available = False
     tds_is_available = False
     if "運営時間" in tdl_str:
@@ -121,7 +129,6 @@ def main():
                 print(f"Tweetの投稿に失敗しました： {target_datetime_str}")
                 print(e)
                 continue
-            time.sleep(2)
     driver.quit()
 
 
