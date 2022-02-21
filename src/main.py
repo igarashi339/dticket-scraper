@@ -51,8 +51,13 @@ def fetch_single_date_ticket_info(driver, target_date_obj):
     time.sleep(5)
     tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
     tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
-    tdl_is_available = ("販売していません" not in tdl_str)
-    tds_is_available = ("販売していません" not in tds_str)
+    tdl_is_available = False
+    tds_is_available = False
+    print(tdl_str, tds_str)
+    if "運営時間" in tdl_str:
+        tdl_is_available = True
+    if "運営時間" in tds_str:
+        tds_is_available = True
     return tdl_is_available, tds_is_available
 
 
@@ -105,8 +110,13 @@ def main():
             should_tweet = get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_available)
             db_handler.update_dticket_status_record(target_datetime_obj, "land", tdl_is_available)
             db_handler.update_dticket_status_record(target_datetime_obj, "sea", tds_is_available)
-            if should_tweet:
-                post_tweet(tweet_handler, target_datetime_obj, tdl_is_available, tds_is_available)
+            try:
+                if should_tweet:
+                    post_tweet(tweet_handler, target_datetime_obj, tdl_is_available, tds_is_available)
+            except Exception as e:
+                print(f"Tweetの投稿に失敗しました： {target_datetime_str}")
+                print(e)
+                continue
             time.sleep(5)
     driver.quit()
 
