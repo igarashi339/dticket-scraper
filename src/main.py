@@ -53,11 +53,11 @@ def fetch_single_date_ticket_info(driver, target_date_obj):
     tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
     tdl_is_available = False
     tds_is_available = False
-    print(tdl_str, tds_str)
     if "運営時間" in tdl_str:
         tdl_is_available = True
     if "運営時間" in tds_str:
         tds_is_available = True
+    print(target_date_str, tdl_str, tds_str, tdl_is_available, tds_is_available)
     return tdl_is_available, tds_is_available
 
 
@@ -106,7 +106,6 @@ def main():
                 print(f"クローリングに失敗しました: {target_datetime_str}")
                 print(e)
                 continue
-            print(target_datetime_str, tdl_is_available, tds_is_available)
             should_tweet = get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_available)
             db_handler.update_dticket_status_record(target_datetime_obj, "land", tdl_is_available)
             db_handler.update_dticket_status_record(target_datetime_obj, "sea", tds_is_available)
