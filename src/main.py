@@ -48,7 +48,7 @@ def fetch_single_date_ticket_info(driver, target_date_obj):
     }
     param = urllib.parse.urlencode(param_dict)
     driver.get(TARGET_URL + "?" + param)
-    time.sleep(5)
+    time.sleep(8)
     tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
     tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
     tdl_is_available = False
@@ -117,7 +117,7 @@ def main():
                 print(f"Tweetの投稿に失敗しました： {target_datetime_str}")
                 print(e)
                 continue
-            time.sleep(5)
+            time.sleep(2)
     driver.quit()
 
 
