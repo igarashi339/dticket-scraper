@@ -12,7 +12,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 TARGET_URL = os.environ["SCRAPING_TARGET_URL"]
 WEEKDAY_LIST = ["月","火","水","木","金","土","日"]
-EXEC_PER_HOUR = 2 # 30分に何回転させるか
+EXEC_PER_HOUR = 1 # 何回転させるか
 
 
 def get_target_date_obj_list():
