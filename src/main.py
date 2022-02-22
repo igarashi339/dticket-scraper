@@ -12,7 +12,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 
 TARGET_URL = os.environ["SCRAPING_TARGET_URL"]
 WEEKDAY_LIST = ["月","火","水","木","金","土","日"]
-EXEC_PER_HOUR = 1 # 何回転させるか
+EXEC_PER_HOUR = 2 # 何回転させるか
 RETRY_NUM = 5
 
 
@@ -78,27 +78,40 @@ def get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_a
     """
     スクレイピング結果を受けてTweetするかを決定する。
     """
+    both_flag = False  # 海陸アカウント
+    land_flag = False  # 陸アカウント
+    sea_flag = False  # 海アカウント
     weekday_str = WEEKDAY_LIST[target_datetime_obj.weekday()]
     if weekday_str == "土" or weekday_str == "日":
         prev_land_available = db_handler.select_from_dticket_status(target_datetime_obj, "land")
         prev_sea_available = db_handler.select_from_dticket_status(target_datetime_obj, "sea")
-        return (not prev_land_available and tdl_is_available) or (not prev_sea_available and tds_is_available)
-    return False
+        land_flag = (not prev_land_available and tdl_is_available)
+        sea_flag = (not prev_sea_available and tds_is_available)
+        both_flag = land_flag or sea_flag
+        return land_flag, sea_flag, both_flag
+    return False, False, False
 
 
-def post_tweet(tweet_handler, target_date_obj, tdl_is_available, tds_is_available):
+def post_tweet(tweet_handler, target_date_obj, tdl_is_available,
+               tds_is_available, land_tweet_flag, sea_tweet_flag, both_tweet_flag):
     dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
     weekday_str = WEEKDAY_LIST[target_date_obj.weekday()]
     tdl_available_str = "〇" if tdl_is_available else "×"
     tds_available_str = "〇" if tds_is_available else "×"
-    # todo: landとsea両方とも協調できるようになったらそうする
-    param_type = "land" if tdl_is_available else "sea"
     param_date = format(target_date_obj, '%Y-%m-%d')
-    tweet_handler.post_tweet(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
-                             f"ランド{tdl_available_str} シー{tds_available_str}\n"
-                             f"https://tdr-plan.com/ticket?type={param_type}&date={param_date}\n"
-                             f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-                             f"#ディズニー #ディズニーチケット")
+    if land_tweet_flag:
+        tweet_handler.post_tweet_holiday_land(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
+                                              f"https://tdr-plan.com/ticket?type=land&date={param_date}\n"
+                                              f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
+                                              f"#ディズニー #ディズニーチケット")
+    if both_tweet_flag:
+        # todo: landとsea両方とも協調できるようになったらそうする
+        param_type = "land" if tdl_is_available else "sea"
+        tweet_handler.post_tweet(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
+                                 f"ランド{tdl_available_str} シー{tds_available_str}\n"
+                                 f"https://tdr-plan.com/ticket?type={param_type}&date={param_date}\n"
+                                 f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
+                                 f"#ディズニー #ディズニーチケット")
 
 
 def main():
@@ -119,12 +132,18 @@ def main():
                 print(f"クローリングに失敗しました: {target_datetime_str}")
                 print(e)
                 continue
-            should_tweet = get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_available)
+            land_tweet_flag, sea_tweet_flag, both_tweet_flag = get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_available)
             db_handler.update_dticket_status_record(target_datetime_obj, "land", tdl_is_available)
             db_handler.update_dticket_status_record(target_datetime_obj, "sea", tds_is_available)
             try:
-                if should_tweet:
-                    post_tweet(tweet_handler, target_datetime_obj, tdl_is_available, tds_is_available)
+                if land_tweet_flag or sea_tweet_flag or both_tweet_flag:
+                    post_tweet(tweet_handler,
+                               target_datetime_obj,
+                               tdl_is_available,
+                               tds_is_available,
+                               land_tweet_flag,
+                               sea_tweet_flag,
+                               both_tweet_flag)
             except Exception as e:
                 print(f"Tweetの投稿に失敗しました： {target_datetime_str}")
                 print(e)
