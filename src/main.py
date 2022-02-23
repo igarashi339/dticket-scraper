@@ -103,7 +103,12 @@ def post_tweet(tweet_handler, target_date_obj, tdl_is_available,
         tweet_handler.post_tweet_holiday_land(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
                                               f"https://tdr-plan.com/ticket?type=land&date={param_date}\n"
                                               f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-                                              f"#ディズニー #ディズニーチケット")
+                                              f"#ディズニーランド #ディズニーチケット")
+    if sea_tweet_flag:
+        tweet_handler.post_tweet_holiday_sea(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
+                                              f"https://tdr-plan.com/ticket?type=sea&date={param_date}\n"
+                                              f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
+                                              f"#ディズニーシー #ディズニーチケット")
     # ツイート数制御のため1回目のループのみツイートする
     if both_tweet_flag and counter == 0:
         # todo: landとsea両方とも協調できるようになったらそうする

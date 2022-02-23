@@ -22,8 +22,22 @@ class TweetHandler:
                                                  access_token_holiday_land,
                                                  access_token_secret_holiday_land)
 
+        # 土日海
+        api_key_holiday_sea = os.environ["TWITTER_API_KEY_HOLIDAY_SEA"]
+        api_secret_holiday_sea = os.environ["TWITTER_API_SECRET_HOLIDAY_SEA"]
+        access_token_holiday_sea = os.environ["TWITTER_ACCESS_TOKEN_HOLIDAY_SEA"]
+        access_token_secret_holiday_sea = os.environ["TWITTER_ACCESS_TOKEN_SECRET_HOLIDAY_SEA"]
+        self.client_holiday_sea = tweepy.Client(None,
+                                                 api_key_holiday_sea,
+                                                 api_secret_holiday_sea,
+                                                 access_token_holiday_sea,
+                                                 access_token_secret_holiday_sea)
+
     def post_tweet(self, text):
         self.client.create_tweet(text=text)
 
     def post_tweet_holiday_land(self, text):
         self.client_holiday_land.create_tweet(text=text)
+
+    def post_tweet_holiday_sea(self, text):
+        self.client_holiday_sea.create_tweet(text=text)
