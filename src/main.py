@@ -93,7 +93,7 @@ def get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_a
 
 
 def post_tweet(tweet_handler, target_date_obj, tdl_is_available,
-               tds_is_available, land_tweet_flag, sea_tweet_flag, both_tweet_flag):
+               tds_is_available, land_tweet_flag, sea_tweet_flag, both_tweet_flag, counter):
     dt_now_utc_aware = datetime.now(timezone(timedelta(hours=9)))
     weekday_str = WEEKDAY_LIST[target_date_obj.weekday()]
     tdl_available_str = "〇" if tdl_is_available else "×"
@@ -104,7 +104,8 @@ def post_tweet(tweet_handler, target_date_obj, tdl_is_available,
                                               f"https://tdr-plan.com/ticket?type=land&date={param_date}\n"
                                               f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
                                               f"#ディズニー #ディズニーチケット")
-    if both_tweet_flag:
+    # ツイート数制御のため1回目のループのみツイートする
+    if both_tweet_flag and counter == 0:
         # todo: landとsea両方とも協調できるようになったらそうする
         param_type = "land" if tdl_is_available else "sea"
         tweet_handler.post_tweet(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
@@ -123,7 +124,7 @@ def main():
     tweet_handler = TweetHandler()
     db_handler = DBHandler()
     target_date_obj_list = get_target_date_obj_list()
-    for i in range(EXEC_PER_HOUR):
+    for counter in range(EXEC_PER_HOUR):
         for target_datetime_obj in target_date_obj_list:
             target_datetime_str = format(target_datetime_obj, '%Y/%m/%d')
             try:
@@ -143,7 +144,8 @@ def main():
                                tds_is_available,
                                land_tweet_flag,
                                sea_tweet_flag,
-                               both_tweet_flag)
+                               both_tweet_flag,
+                               counter)
             except Exception as e:
                 print(f"Tweetの投稿に失敗しました： {target_datetime_str}")
                 print(e)
