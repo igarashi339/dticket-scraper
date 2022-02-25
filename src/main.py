@@ -109,8 +109,7 @@ def post_tweet(tweet_handler, target_date_obj, tdl_is_available,
                                               f"https://tdr-plan.com/ticket?type=sea&date={param_date}\n"
                                               f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
                                               f"#ディズニーシー #ディズニーチケット")
-    # ツイート数制御のため1回目のループのみツイートする
-    if both_tweet_flag and counter == 0:
+    if both_tweet_flag:
         # todo: landとsea両方とも協調できるようになったらそうする
         param_type = "land" if tdl_is_available else "sea"
         tweet_handler.post_tweet(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
