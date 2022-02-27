@@ -87,7 +87,7 @@ def get_should_tweet(db_handler, target_datetime_obj, tdl_is_available, tds_is_a
     prev_sea_available = db_handler.select_from_dticket_status(target_datetime_obj, "sea")
     land_flag = (not prev_land_available and tdl_is_available)
     sea_flag = (not prev_sea_available and tds_is_available)
-    both_flag = holiday_land_flag or holiday_sea_flag
+    both_flag = land_flag or sea_flag
     if weekday_str == "土" or weekday_str == "日":
         holiday_land_flag = land_flag
         holiday_sea_flag = sea_flag
