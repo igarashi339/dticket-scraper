@@ -33,6 +33,17 @@ class TweetHandler:
                                                  access_token_holiday_sea,
                                                  access_token_secret_holiday_sea)
 
+        # 平日海陸
+        api_key_weekday = os.environ["TWITTER_API_KEY_WEEKDAY"]
+        api_secret_weekday = os.environ["TWITTER_API_SECRET_WEEKDAY"]
+        access_token_weekday = os.environ["TWITTER_ACCESS_TOKEN_WEEKDAY"]
+        access_token_secret_weekday = os.environ["TWITTER_ACCESS_TOKEN_SECRET_WEEKDAY"]
+        self.client_weekday = tweepy.Client(None,
+                                            api_key_weekday,
+                                            api_secret_weekday,
+                                            access_token_weekday,
+                                            access_token_secret_weekday)
+
     def post_tweet(self, text):
         self.client.create_tweet(text=text)
 
@@ -41,3 +52,6 @@ class TweetHandler:
 
     def post_tweet_holiday_sea(self, text):
         self.client_holiday_sea.create_tweet(text=text)
+
+    def post_tweet_weekday(self, text):
+        self.client_weekday.create_tweet(text=text)
