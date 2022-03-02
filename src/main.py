@@ -104,18 +104,6 @@ def post_tweet(tweet_handler, target_date_obj, tdl_is_available, tds_is_availabl
     tdl_available_str = "〇" if tdl_is_available else "×"
     tds_available_str = "〇" if tds_is_available else "×"
     param_date = format(target_date_obj, '%Y-%m-%d')
-    # if holiday_land_tweet_flag:
-    #     param = f"land={param_date}"
-    #     tweet_handler.post_tweet_holiday_land(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
-    #                                           f"https://tdr-plan.com/ticket?{param}\n"
-    #                                           f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-    #                                           f"#ディズニーランド #ディズニーチケット")
-    # if holiday_sea_tweet_flag:
-    #     param = f"sea={param_date}"
-    #     tweet_handler.post_tweet_holiday_sea(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
-    #                                           f"https://tdr-plan.com/ticket?{param}\n"
-    #                                           f"※{dt_now_utc_aware.strftime('%Y/%m/%d %H:%M:%S')}時点の情報\n"
-    #                                           f"#ディズニーシー #ディズニーチケット")
     if holiday_both_tweet_flag:
         param = f"land={param_date}&sea={param_date}"
         tweet_handler.post_tweet(f"{format(target_date_obj, '%Y/%m/%d')}({weekday_str})の1デーパス空いてるよ！\n"
