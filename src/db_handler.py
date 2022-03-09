@@ -43,3 +43,9 @@ class DBHandler:
             print(e.__str__())
             sys.exit()
         return result_list[0] if len(result_list) != 0 else False
+
+    def delete_unnecessary_records(self):
+        dt_now = datetime.now(timezone(timedelta(hours=9)))
+        table_name = "dticket_status"
+        query_str = "DELETE FROM " + table_name + " where target_date < " + "\'" + dt_now.strftime('%Y-%m-%d') + "\'"
+        self.exec_query(query_str)
