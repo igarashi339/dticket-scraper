@@ -13,7 +13,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 TARGET_URL = os.environ["SCRAPING_TARGET_URL"]
 WEEKDAY_LIST = ["月","火","水","木","金","土","日"]
 EXEC_PER_HOUR = 2 # 何回転させるか
-RETRY_NUM = 5
+RETRY_NUM = 10
 
 
 def get_target_date_obj_list():
@@ -51,9 +51,15 @@ def fetch_single_date_ticket_info(driver, target_date_obj):
     driver.get(TARGET_URL + "?" + param)
     time.sleep(8)
 
+    tdl_str = ""
+    tds_str = ""
     for i in range(RETRY_NUM):
-        tdl_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span").text
-        tds_str = driver.find_element_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span").text
+        tdl_str_list = driver.find_elements_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[1]/span")
+        tds_str_list = driver.find_elements_by_xpath("//*[@id=\"search-ticket-group\"]/div/section/div[2]/section[1]/div[1]/div/ul/li[2]/span")
+        if len(tdl_str_list) == 0 or len(tds_str_list) == 0:
+            break
+        tdl_str = tdl_str_list[0].text
+        tds_str = tds_str_list[0].text
         if tdl_str != "" and tds_str != "":
             break
         time.sleep(5)
